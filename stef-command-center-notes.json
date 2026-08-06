@@ -1,12 +1,16 @@
 {
-  "notes": {},
+  "notes": {
+    "170434204": "Not sure I completely agree - as I wanted to make sure that Chelsea understood what data and security using the EN Api would entail",
+    "170545595": "Internal touch base meeting "
+  },
   "pieces": [
     {
       "n": 1,
       "title": "What your donation data is actually telling you",
       "status": "In review",
       "target": "2026-09-30",
-      "published": ""
+      "published": "",
+      "productive": "https://app.productive.io/2650/tasks/task/18970736?filter=eyIwIjp7IjAiOnsiYXNzaWduZWVfaWQiOnsiZXEiOlsie21lfSJdfX0sIjEiOnsid29ya2Zsb3dfc3RhdHVzX2NhdGVnb3J5X2lkIjp7Im5vdF9lcSI6WyIzIl19fSwiMiI6eyJkdWVfZGF0ZSI6eyJlcSI6IjEifX0sIiRvcCI6ImFuZCJ9LCJpZCI6IjI2NDkxNjEiLCJzb3J0QnkiOiJncm91cCIsImdyb3VwQnkiOiJkdWUtZGF0ZTpkYXksdGFzayIsImNvbHVtbnMiOiJncm91cCxjb21wYW55LHdvcmtmbG93LXN0YXR1cyxjdXN0b20tZmllbGRzLTk2MjQwLHN0YXJ0LWRhdGUsdGFzay1kdWUtZGF0ZSxyZW1haW5pbmctdGltZSx3b3JrZWQtdGltZSxlc3RpbWF0aW9uLW9mZnNldC10aW1lIiwiY29sdW1uU2V0dGluZ3MiOnsiZ3JvdXAiOnsibWluV2lkdGgiOjIxMH0sImNvbXBhbnkiOnsibWluV2lkdGgiOjExNH0sIndvcmtmbG93U3RhdHVzIjp7Im1pbldpZHRoIjoxMTF9fSwic2V0dGluZ3MiOnt9LCJmb3JtdWxhcyI6e30sInRyYW5zcG9zZUJ5IjpudWxsLCJsYXlvdXRJZCI6IjEwMyIsInJlcG9ydExheW91dElkIjpudWxsLCJjaGFydFR5cGVJZCI6bnVsbCwiJG9wIjoiYW5kIn0%3D"
     },
     {
       "n": 2,
@@ -37,5 +41,5 @@
       "published": ""
     }
   ],
-  "exportedAt": "2026-08-06T17:59:45Z"
+  "exportedAt": "2026-08-06T18:00:26.461Z"
 }
