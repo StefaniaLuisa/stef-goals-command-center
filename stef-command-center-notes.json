@@ -1,0 +1,41 @@
+{
+  "notes": {},
+  "pieces": [
+    {
+      "n": 1,
+      "title": "What your donation data is actually telling you",
+      "status": "In review",
+      "target": "2026-09-30",
+      "published": ""
+    },
+    {
+      "n": 2,
+      "title": "What data actually matters, stop tracking for tracking's sake",
+      "status": "Idea",
+      "target": "Early Nov 2026",
+      "published": ""
+    },
+    {
+      "n": 3,
+      "title": "Turning a dense audit into three decisions",
+      "status": "Idea",
+      "target": "Late Dec 2026",
+      "published": ""
+    },
+    {
+      "n": 4,
+      "title": "What AI in search means for nonprofit marketing",
+      "status": "Idea",
+      "target": "Feb 2027",
+      "published": ""
+    },
+    {
+      "n": 5,
+      "title": "A donor-journey walkthrough in Looker Studio",
+      "status": "Idea",
+      "target": "Mar or Apr 2027",
+      "published": ""
+    }
+  ],
+  "exportedAt": "2026-08-06T17:59:45Z"
+}
