@@ -15,14 +15,13 @@ APP contains one line of the form `<script id="appdata" type="application/json">
     generatedAt, rangeDefault, person_id, org_id_guess,
     calls: [ {id, title, date "YYYY-MM-DD", url, attendees:[...], talkPct (int|null), feedback (string|null), userNote (string, optional),
               meetingType (string), typicalRange (string), learnings (string),
-              grade: { score (int|null), categories:{A,B,C,D}, rubricVersion:1, evidence:{A,B,C,D},
-                       dOwnersNA (bool, optional), dPending (bool, optional),
+              grade: { score (int 0-100), raw (int 0-80), categories:{A,B,C}, rubricVersion:2, evidence:{A,B,C},
                        notScored (bool, optional), notScoredReason (string, optional) } } ],
     hours: { connected:true, weeks:[ {week, monday, total, nights, weekends, note (string, optional), entries:[ {task, project, loggedAt, minutes, date} ] } ] },
     pieces: [ {n, title, status, target, published, topic?} ],  // Stef's Corner ideas
-    rubricVersion: 1, gradeScale: [[95,"A+"],[88,"A"],[84,"A-"],[80,"B+"],[75,"B"],[70,"B-"],[60,"C"]]
+    rubricVersion: 2, gradeScale: [[95,"A+"],[88,"A"],[84,"A-"],[80,"B+"],[75,"B"],[70,"B-"],[60,"C"]]
   }
-Read DATA. You MERGE into calls[], REPLACE hours, and (STEP 2.5) fold in Stef's own notes/ideas/week-notes. Never drop an existing call or overwrite an existing non-empty feedback/talkPct/grade/learnings. TODAY = `date +%F`.
+Read DATA. You MERGE into calls[], REPLACE hours, and (STEP 2.5) fold in Stef's own notes/ideas/week-notes. Never drop an existing call or overwrite an existing non-empty feedback/talkPct/grade/learnings. If you meet a call still carrying a rubricVersion:1 grade with a categories.D, rescore it: drop D, set raw=A+B+C, score=round(raw/80*100), rubricVersion:2. TODAY = `date +%F`.
 
 === STEP 0 — PREP GITHUB CLONE + LOAD STEF'S NOTES ===
 Read github-config.json → owner, repo, branch, token, author_name, author_email.
@@ -44,9 +43,9 @@ Locate Stef's notes file (call it NOTES): the most recently modified file matchi
    - MEETING TYPE (display context only, never scored): classify as "discovery / new business" (20–40%), "recurring client check-in" (30–50%), "working session / training" (50–70%), or "design or deliverable review" (20–35%). Set meetingType and typicalRange.
    - Append {id, title, date, url, attendees, talkPct, feedback, meetingType, typicalRange} to DATA.calls.
 
-=== STEP 1.5 — GRADE THE CALL (rubric v1, CLIENT calls only) ===
-Grade every CLIENT call dated 2026-08-17 or later that does not already have a non-empty `grade`. Older client calls are backfilled here too, oldest-first, within the same 8-transcript cap. INTERNAL calls get grade={notScored:true, notScoredReason:"Internal call — not graded", rubricVersion:1} and learnings="".
-Score out of 100. EVERY point must trace to something actually said on the call or recorded in Productive. Write a one-or-two-sentence evidence string per category into grade.evidence quoting or citing the moment. Never award a point you cannot evidence.
+=== STEP 1.5 — GRADE THE CALL (rubric v2, CLIENT calls only) ===
+Grade every CLIENT call dated 2026-08-17 or later that does not already have a non-empty `grade`. Older client calls are backfilled here too, oldest-first, within the same 8-transcript cap. INTERNAL calls get grade={notScored:true, notScoredReason:"Internal call — not graded", rubricVersion:2} and learnings="".
+EVERY point must trace to something actually said on the call. Write a one-or-two-sentence evidence string per category into grade.evidence quoting or citing the moment. Never award a point you cannot evidence.
   A · Listening and engagement — 30
      · open, diagnostic questions (10) — asked about their goal, constraint, or why now; not just yes/no confirmations
      · handled concerns without defensiveness (10) — acknowledged the concern BEFORE explaining the reasoning
@@ -57,14 +56,10 @@ Score out of 100. EVERY point must trace to something actually said on the call 
      · named a risk or tradeoff the client had not raised (10)
   C · Meeting control — 20
      · purpose stated up front (5) · time managed by Stef not flagged by the client (5) · stayed on the decisions needed (10)
-  D · Follow-through — 20 — read from PRODUCTIVE ONLY. Do NOT check Gmail; Stef's recaps and action items live in Productive, and a Gmail-based check scores her near zero for a channel she does not use.
-     · tasks created within 24h of the call that cite the meeting and capture its action items (8)
-     · due dates set on those tasks (6)
-     · owners assigned (6) — assignment is MIXED by project. Score this ONLY where Stef created the task. Otherwise set dOwnersNA=true, score D out of 14, and normalize: D = round(raw/14*20).
-     · If Productive is unreachable: set dPending=true, omit D, and normalize the call out of 80 → score = round((A+B+C)/80*100). NEVER score D as zero for a failed API call.
-  NOT SCORED: if the transcript misattributes speakers (several people collapsed into "Speaker 1"), set grade={notScored:true, notScoredReason:"...", rubricVersion:1} instead of scoring.
-  categories.A + .B + .C + .D MUST equal score. Set rubricVersion:1.
-  The grade scale is FIXED and is NOT re-tuned after the fact: A+ 95 · A 88 · A− 84 · B+ 80 · B 75 · B− 70 · C 60 · Review below 60. A well-run client call typically lands 76–86.
+  There is NO follow-through category. Do NOT check Productive tasks, Gmail, or any other system when grading — the entire rubric is evidenced from the transcript alone. Do not reintroduce a fourth category.
+  NOT SCORED: if the transcript misattributes speakers (several people collapsed into "Speaker 1"), set grade={notScored:true, notScoredReason:"...", rubricVersion:2} instead of scoring.
+  SCORING: raw = A + B + C, out of 80. categories.A + .B + .C MUST equal raw. score = round(raw/80*100). Set both `raw` and `score`, and rubricVersion:2.
+  The grade scale is FIXED and is NOT re-tuned after the fact: A+ 95 · A 88 · A− 84 · B+ 80 · B 75 · B− 70 · C 60 · Review below 60. On current evidence a well-run client call lands roughly 74–84 (provisional, from only two scored calls — do not restate this range as settled, and do not adjust the letter thresholds to move where calls land).
 LEARNINGS: one imperative sentence, 15 words or fewer, pointed at the next meeting, drawn from the LOWEST-scoring criterion. If no criterion scored 0 AND the score is 84 or above, set learnings="Not needed, well done". Never give more than one fix.
 
 === STEP 2 — HOURS (Productive REST API) ===
@@ -94,7 +89,7 @@ Otherwise, using the /tmp/ccrepo clone from STEP 0:
 
 === NOTIFY (short) ===
 - Client calls added this run (count) with talk-share % and grade; how many meetings still await transcript processing.
-- Grades: how many calls graded this run, how many older calls still un-backfilled, and any marked Not scored or D pending (with the reason).
+- Grades: how many calls graded this run, how many older calls still un-backfilled, and any marked Not scored (with the reason).
 - Hours: latest week total and any late-night/weekend flags this week.
 - Notes: whether a notes file was found and folded in (and from where: repo or local), and how many week notes were re-applied.
 - GitHub: "pushed <short-sha>" or "skipped (not configured yet)" or the error text.
